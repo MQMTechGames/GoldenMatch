@@ -1,0 +1,149 @@
+*slide
+Note to viewers
+
+s:Some of the code shown during
+s:the presentation can not
+s:be distributed, sorry :/
+;
+
+
+*slide
+Advanced Editor Scripting
+
+Yilmaz Kiymaz
+s:Unity Oracle
+s:Indie Developer
+;
+
+
+*slide
+Last year's Intro session
+
+s:Inspector Editors
+s:Editor Windows
+s:SerializedObject	
+s:SerializedProperty
+s:Drag and Drop
+s:Handles
+s:Multi-object editing
+;
+
+
+*slide
+Types of Editor Tools
+
+s:Workflow assistance and automation
+s:Asset processing (import pipeline)
+s:Build pipeline customization
+s:Optimization
+s:Just for fun
+;
+
+
+*slide
+Workflow Assistance
+
+s:BoxPlots Grid Editor
+s:(code unavailable)
+;
+
+
+*slide
+Workflow Assistance
+
+s:BoxPlots Level Navigator
+s:(code unavailable)
+;
+
+
+*slide
+Asset processing
+
+s:Post-processing models by name
+s:(Editor/ModelAssetPostProcessor.cs)
+;SelectModelsFolder
+
+
+*slide
+Asset processing
+
+s:Post-processing textures by folder
+s:(Editor/SourceTextureAssetPostProcessor.cs)
+;SelectSourceTexturesFolder
+
+
+*slide
+Build pipeline customization
+
+s:Build Manager 
+s:(Window/Build Manager)
+;ShowBuildManager
+
+
+*slide
+Optimization
+
+s:Resource Checker
+s:by Hand Circus
+s:(Obtain from Asset Store)
+;
+
+
+*slide
+Optimization
+
+s:External PVR compression
+s:(Window/Create High Quality PVRTC)
+;SelectPVRTexture
+
+
+*slide
+Optimization
+
+s:Post-build resource usage
+s:build.log file next to build made by Build Manager
+;ShowBuildManager
+
+
+*slide
+Just for fun
+
+s:PixelPlacement's StressBall
+s:(Obtain from Asset Store)
+;
+
+
+*slide
+Just for fun
+
+s:Web Window
+s:(Editor/WebWindow.cs)
+;ShowWebWindow
+
+
+*slide
+Just for fun
+
+s:Editor Slides
+s:(Editor/AdvancedEditorScripting.cs)
+;
+
+
+*slide
+Better integration
+
+s:Styling
+s:PreferenceItem
+s:SceneView integration
+s:What would Unity Editor do?
+;
+
+
+*slide
+Questions?
+
+s:Contact:
+s:@VoxelBoy
+s:ylmzkymz@gmail.com
+s:www.yilmazkiymaz.com
+;

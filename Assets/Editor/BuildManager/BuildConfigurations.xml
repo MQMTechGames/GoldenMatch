@@ -1,0 +1,14 @@
+<BuildConfiguration>
+	<Name>Release Build</Name>
+		<Scene>1f6e3bf3e676aec45b7ad3ce2716c075</Scene>
+		<Scene>bd38c2d27fdaa8742a48f19b5cb6f4c6</Scene>
+</BuildConfiguration>
+<BuildConfiguration>
+	<Name>Test 1</Name>
+		<Scene>12f0c58f3a8749743a5fe84e6ef59b7d</Scene>
+</BuildConfiguration>
+<BuildConfiguration>
+	<Name>Press Build</Name>
+		<Scene>1f6e3bf3e676aec45b7ad3ce2716c075</Scene>
+		<Scene>bd38c2d27fdaa8742a48f19b5cb6f4c6</Scene>
+</BuildConfiguration>
