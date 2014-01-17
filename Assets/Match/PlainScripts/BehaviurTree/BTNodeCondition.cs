@@ -10,7 +10,7 @@ public class BTNodeCondition : BTNode
 	bool 			_init = false;
 	
 	public BTNodeCondition(BT tree, string name, BTCondition condition)
-		:base(tree, name, BTNodeType.BT_NODE_CONDITION)
+		:base(tree, name, BTNodeType.BTNODE_CONDITION)
 	{
 		_condition = condition;
 	}

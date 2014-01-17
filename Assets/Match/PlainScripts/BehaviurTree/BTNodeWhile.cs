@@ -8,7 +8,7 @@ public class BTNodeWhile : BTNode
 	BTCondition _condition = null;
 	
 	public BTNodeWhile(BT tree, string name, BTCondition condition)
-		:base(tree, name, BTNodeType.BT_NODE_WHILE)
+		:base(tree, name, BTNodeType.BTNODE_WHILE)
 	{
 		_condition = condition;
 	}

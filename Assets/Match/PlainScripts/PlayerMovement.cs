@@ -53,7 +53,7 @@ public class PlayerMovement
 		return angle;
 	}
 
-	public float runToPointStep(Vector3 point, float rotateStep, float dampTime = 0.0f, float attenuationMinDist = 0.25f, float attenuationMaxDist = 5.5f)
+	public float runToPointStepSmooth(Vector3 point, float dampTime = 0.0f, float attenuationMinDist = 0.25f, float attenuationMaxDist = 5.5f)
 	{
 		float distance = MathUtils.getDistanceToPoint(_transform, point);
 		
@@ -64,11 +64,18 @@ public class PlayerMovement
 		speed = MathUtils.clamp(speed);
 		
 		// Move forward
+		_anim.SetFloat(_animParams.speedFloat, speed);
+
+		return distance; 
+	}
+
+	public float runToPointStepStraight(Vector3 point, float speed, float dampTime = 0.0f)
+	{
+		float distance = MathUtils.getDistanceToPoint(_transform, point);
+		
+		// Move forward
 		_anim.SetFloat(_animParams.speedFloat, speed, dampTime, Time.deltaTime);
-		
-		// Keep adjusting rotation
-		float angleRotated = rotateToPoint(point, rotateStep);
-		
+
 		return distance; 
 	}
 

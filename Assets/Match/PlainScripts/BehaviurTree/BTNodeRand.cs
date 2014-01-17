@@ -40,7 +40,7 @@ public class BTNodeRand : BTNode
 	bool 				_isInit;
 	
 	public BTNodeRand(BT tree, string name)
-		:base(tree, name, BTNodeType.BT_NODE_RANDOM)
+		:base(tree, name, BTNodeType.BTNODE_RANDOM)
 	{
 		_nodes = new List<BTRandData> ();
 		_calculateProbs = false;

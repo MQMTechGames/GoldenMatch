@@ -140,15 +140,15 @@ public class BTBuilder
 				node = new BTNodeLeaf(_tree, name, callback);
 			break;
 				
-			case BTNodeType.BT_NODE_CONDITION:
+			case BTNodeType.BTNODE_CONDITION:
 				node = new BTNodeCondition(_tree, name, condition);
 			break;
 
-			case BTNodeType.BT_NODE_WHILE:
+			case BTNodeType.BTNODE_WHILE:
 			node = new BTNodeWhile(_tree, name, condition);
 			break;
 				
-			case BTNodeType.BT_NODE_RANDOM:
+			case BTNodeType.BTNODE_RANDOM:
 				node = new BTNodeRand(_tree, name);
 			break;
 				
@@ -193,15 +193,15 @@ public class BTBuilder
 			DebugUtils.assert(false, "not allowed to add nodes in the leaf node " + node._name);
 			break;
 
-			case BTNodeType.BT_NODE_CONDITION:
+			case BTNodeType.BTNODE_CONDITION:
 				((BTNodeCondition)parent).addNode(node);
 			break;
 
-			case BTNodeType.BT_NODE_WHILE:
+			case BTNodeType.BTNODE_WHILE:
 				((BTNodeWhile)parent).addNode(node);
 			break;
 
-			case BTNodeType.BT_NODE_RANDOM:
+			case BTNodeType.BTNODE_RANDOM:
 				if(probability >= 0) {
 					((BTNodeRand)parent).addNode(node, probability);
 	     		} else {
