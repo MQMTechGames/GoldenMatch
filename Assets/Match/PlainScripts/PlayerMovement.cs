@@ -79,33 +79,6 @@ public class PlayerMovement
 		return distance; 
 	}
 
-	public void move()
-	{
-		float h = Input.GetAxis("Horizontal");
-		float v = Input.GetAxis("Vertical");
-		bool sneak = Input.GetButton("Sneak");
-		
-		MovementManagement(h, v, sneak);
-	}
-
-	void MovementManagement (float horizontal, float vertical, bool sneaking)
-	{
-		// Set the sneaking parameter to the sneak input.
-		_anim.SetBool(_hash.sneakingBool, sneaking);
-		
-		// If there is some axis input...
-		if(horizontal != 0f || vertical != 0f)
-		{
-			// ... set the players rotation and set the speed parameter to 5.5f.
-			Rotating(horizontal, vertical);
-			_anim.SetFloat(_hash.speedFloat, 5.5f, speedDampTime, Time.deltaTime);
-		}
-		else
-			// Otherwise set the speed parameter to 0.
-			_anim.SetFloat(_hash.speedFloat, 0);
-	}
-	
-	
 	void Rotating (float horizontal, float vertical)
 	{
 		// Create a new vector of the horizontal and vertical inputs.

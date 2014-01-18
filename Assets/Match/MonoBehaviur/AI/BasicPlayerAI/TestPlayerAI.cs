@@ -8,9 +8,10 @@ using System.Reflection;
 
 public class TestPlayerAI
 {
-	static float kThresholdToApproachBall = 0.30f;
-	static float kThresholdBallHandlingApproachBall = 0.40f;
-	static float kThresholdBallHandlingWaypoint = kThresholdBallHandlingApproachBall * 3.0f;
+	static float kThresholdToApproachBall = 0.75f;
+	static float kThresholdBallHandlingApproachBall = 0.60f;
+    static float kThresholdBallHandlingWaypoint = 1.5f;
+    static float kThresholdToApproachBallToShot = 0.75f;
 
 	public bool _isAttackingTeam = true;
 	
@@ -52,8 +53,8 @@ public class TestPlayerAI
 		_shootTransform = GameObjectUtils.getComponentByEntityName<Transform>("shotPosition");
 
 		DebugUtils.assert(null != _shootTransform, "_shotPosition must exist");
-		DebugUtils.assert(null != _transform, "transform must exist");
-		DebugUtils.assert(null != _animator, "animator must exist");
+		DebugUtils.assert(null != _transform, "_transform must exist");
+		DebugUtils.assert(null != _animator, "_animator must exist");
 		
 		// Init objects
 		_animParams = AnimatorParams.sharedInstance();
@@ -66,9 +67,9 @@ public class TestPlayerAI
 		builder.
 			addNode (parentName, "TestPlayerAI", BTNodeType.BTNODE_SEQUENCE)
 
-				/**/.addNode ("TestPlayerAI", "clearConsole", BTNodeType.BTNODE_LEAF, null, clearConsole)
+                /**/.addNode ("TestPlayerAI", "clearConsole", BTNodeType.BTNODE_LEAF, null, clearConsole)
 
-				// Recover the ball
+				// Recovering
 				/**/.addNode ("TestPlayerAI", "RecoverBall", BTNodeType.BTNODE_SEQUENCE, null)
 				/**//**/.addNode ("RecoverBall", "recoverBallInitialRotation", BTNodeType.BTNODE_LEAF, null, recoverBallInitialRotation)
 				/**//**/.addNode ("RecoverBall", "recoverBallLoop", BTNodeType.BTNODE_WHILE, recoverBallLoopCondition)
@@ -76,7 +77,7 @@ public class TestPlayerAI
 				/**//**//**//**/.addNode ("recoverBallLoopStep", "recoveringRotateToBallStep", BTNodeType.BTNODE_LEAF, null, recoveringRotateToBallStep)
 				/**//**//**//**/.addNode ("recoverBallLoopStep", "recoveringGoToBallStep", BTNodeType.BTNODE_LEAF, null, recoveringGoToBallStep)
 
-				// BallHandle the ball
+				// BallHandling
 				/**/.addNode ("TestPlayerAI", "ballHandlingToWaypoint", BTNodeType.BTNODE_PRIORITY, null)
 				/**//**/.addNode ("ballHandlingToWaypoint", "ballHandlingToWaypointLoop", BTNodeType.BTNODE_WHILE, ballHandlingToWaypointLoopCondition)
 				/**//**//**/.addNode ("ballHandlingToWaypointLoop", "BallHandlingToWaypointStep", BTNodeType.BTNODE_SEQUENCE)
@@ -85,10 +86,46 @@ public class TestPlayerAI
 				/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingCalculateWaypointDir", BTNodeType.BTNODE_LEAF, null, ballHandlingCalculateWaypointDir)
 				/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingPushBallToWaypoint", BTNodeType.BTNODE_LEAF, null, ballHandlingPushBallToWaypoint)
 
-				// Shot the ball
-				/**/.addNode ("TestPlayerAI", "shotBallToGoal", BTNodeType.BTNODE_LEAF, null, shotBallToGoal)
+				// Shotting
+				/**/.addNode ("TestPlayerAI", "shooting", BTNodeType.BTNODE_SEQUENCE)
+                /**//**/.addNode("shooting", "shootingPrepareToShotLoop", BTNodeType.BTNODE_WHILE, shootingPrepareToShotLoopCondition)
+                /**//**//**/.addNode("shootingPrepareToShotLoop", "shootingRotateToBall", BTNodeType.BTNODE_LEAF, null, ballHandlingRotateToBall)
+                /**//**//**/.addNode("shootingPrepareToShotLoop", "shootingGoToBallStep", BTNodeType.BTNODE_LEAF, null, ballHandlingGoToBallStep)
+                /**//**/.addNode("shooting", "shootingDoShot", BTNodeType.BTNODE_LEAF, null, shootingDoShot)
 				;
 	}
+    
+    // shooting
+
+    bool shootingPrepareToShotLoopCondition()
+    {
+        float distance = MathUtils.getDistanceToPoint(_transform, _ballTransform.position);
+
+        return distance > kThresholdToApproachBallToShot;
+    }
+
+    BTNodeResponse shootingGoToBall()
+    {
+        float distance = _playerController.runToPointStepSmooth(_ballTransform.position, 0f, 0f, 10f);
+
+        if (distance < kThresholdToApproachBallToShot)
+        {
+            return BTNodeResponse.LEAVE;
+        }
+
+        return BTNodeResponse.STAY;
+    }
+
+
+    BTNodeResponse shootingDoShot()
+    {
+        float forceMag = 15f;
+        Vector3 force = _waypointDir * forceMag;
+
+        _ballTransform.rigidbody.AddForce(force, ForceMode.Impulse);
+
+        return BTNodeResponse.LEAVE;
+    }
 
 	// Clear console
 	BTNodeResponse clearConsole()
@@ -108,7 +145,7 @@ public class TestPlayerAI
 		Vector3 dirToBall = _ballTransform.position - _transform.position;
 		float distanceToBall = dirToBall.magnitude;
 		
-		return distanceToBall > 1f;
+		return distanceToBall > kThresholdToApproachBall;
 	}
 
 	BTNodeResponse recoverBallInitialRotation()
@@ -186,16 +223,6 @@ public class TestPlayerAI
 
 		_ballTransform.rigidbody.AddForce(force, ForceMode.Impulse);
 
-		return BTNodeResponse.LEAVE;
-	}
-
-	BTNodeResponse shotBallToGoal()
-	{
-		float forceMag = 15f;
-		Vector3 force = _waypointDir * forceMag;
-		
-		_ballTransform.rigidbody.AddForce(force, ForceMode.Impulse);
-		
 		return BTNodeResponse.LEAVE;
 	}
 }
