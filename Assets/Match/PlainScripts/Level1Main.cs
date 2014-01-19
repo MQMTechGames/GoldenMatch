@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using AStar;
 
 /**
  * This class is responsible to init the life cycle of a level
@@ -61,8 +62,24 @@ public class Level1Main : ILevelMain
 	}
 
 //	States
+    static bool init = false;
 	void mainScreenState()
 	{
+        if (false == init)
+        {
+            // Test Tile
+            TiledAStar tiledAStar;
+            TiledAStar.create(out tiledAStar, 10, 10);
+
+            // add the tiles
+            tiledAStar.addTile(new Tile(new ID(0,0), new Vector3(10,0,10), true, null));
+
+            AStar.Tile tile = tiledAStar.getTileByID(new AStar.ID(0, 0));
+            DebugUtils.log("tile 0,0 is: " + tile._id._x + ", " + tile._id._y);
+
+            init = true;
+        }
+
 		Debug.Log ("mainScreenState");
 		if (Input.anyKey && !isSceleLoaded && false)
 		{

@@ -915,7 +915,7 @@ public class Automator : EditorWindow {
 	
 	public void SelectAsset(string[] parameters) {
 		//naganna work
-		GameObject[] objs = (GameObject[]) FindSceneObjectsOfType(typeof(GameObject));
+		GameObject[] objs = (GameObject[]) FindObjectsOfType(typeof(GameObject));
 		StringBuilder sb = new StringBuilder();
 		foreach(GameObject obj in objs) {
 			sb.AppendLine(obj.name);

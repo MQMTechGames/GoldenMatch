@@ -12,6 +12,8 @@ public class BT
 
 	Dictionary<string, BTNode> _nodes = null;
 
+    public static bool enableDebugLog = false;
+
 	public BTNodeResponse			_lastNodeState;
 
 	public BT()
@@ -44,9 +46,10 @@ public class BT
 			setCurrentNode(_rootNode);
 		}
 
-		//#if DEBUG_BT
-		DebugUtils.log("Update current node: " + _currNode._name);
-		//#endif
+        if (enableDebugLog)
+        {
+            DebugUtils.log("Update current node: " + _currNode._name);
+        }
 
 		_lastNodeState = _currNode.Update ();
 	}
@@ -89,9 +92,10 @@ public class BT
 
 	public void setCurrentNode(BTNode node)
 	{
-		//#if DEBUG_BT
-		DebugUtils.log("Set current node: " + node._name);
-		//#endif
+        if (enableDebugLog)
+        {
+            DebugUtils.log("Set current node: " + node._name);
+        }
 
 		int nParallelNodes = _parallelNodesStack.Count;
 		if (nParallelNodes > 0) {

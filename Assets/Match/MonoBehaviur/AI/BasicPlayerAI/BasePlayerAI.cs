@@ -263,8 +263,6 @@ public class BasePlayerAI : MonoBehaviour
 	// User Input controller
 	private BTNodeResponse controllMovementCallback()
 	{
-		DebugUtils.log("I am in UserInput node");
-
         IInputPlayerController inputPlayerController = _inputControllerManager.getActiveInputPlayerController();
         DebugUtils.assert(null != inputPlayerController, "[BasePlayerAI->controllerMovementCallback]: Player Controller must NOT be NULL");
 
