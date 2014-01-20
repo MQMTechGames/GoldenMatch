@@ -80,7 +80,7 @@ public class Level1Main : ILevelMain
             init = true;
         }
 
-		Debug.Log ("mainScreenState");
+        //DebugUtils.Log ("mainScreenState");
 		if (Input.anyKey && !isSceleLoaded && false)
 		{
 			stateMachine.changeState("mainSceneState");
@@ -92,6 +92,6 @@ public class Level1Main : ILevelMain
 
 	void mainSceneState()
 	{
-		Debug.Log ("mainSceneState");
+        //Debug.Log ("mainSceneState");
 	}
 }

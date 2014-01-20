@@ -26,6 +26,7 @@ namespace AStar
         CostCalculatorCallback      _costCalculatorCallback = null;
         HeuristicCalculatorCallback _heuristicCalculatorCallback = null;
 
+
         public static void create(out TiledAStar tiledAStar, int width, int height)
         {
             tiledAStar = new TiledAStar(width, height);
@@ -239,11 +240,7 @@ namespace AStar
         {
             bool inserted = false;
 
-            Tile prevTile = null;
-            int   prevFxPos = -1;
-            float newFX = tile._fx;
-
-            // add ordered
+            //  add ordered
             for (int i = 0; i < _openList.Count; i++)
             {
                 Tile aTile = _openList[i];
@@ -251,11 +248,7 @@ namespace AStar
                 {
                     _openList.Insert(i, tile);
                     inserted = true;
-                 
-                    // for debugging
-                    prevTile = aTile;
-                    prevFxPos = i;
-   
+
                     break;
                 }
             }
@@ -264,24 +257,6 @@ namespace AStar
             {
                 _openList.Add(tile);
             }
-
-            if (null!=prevTile)
-            {
-                DebugUtils.assert(prevTile == _openList[prevFxPos +1], "Error, Previous tails is not in prev place +1");
-
-                if (prevFxPos > 0)
-                {
-                    DebugUtils.log("PrevFx: " + _openList[prevFxPos - 1]._fx);
-                }
-
-                DebugUtils.log("CurrNewFx: " + _openList[prevFxPos]._fx + ", equals to: " + tile._fx);
-
-                if (prevFxPos+1 < _openList.Count)
-                {
-                    DebugUtils.log("PosFX: " + _openList[prevFxPos +1]._fx);
-                }
-            }
-            
         }
 
 
@@ -300,13 +275,7 @@ namespace AStar
 
         bool getIsTileInOpenList(Tile tile)
         {
-            bool found = _openList.Exists(
-                delegate(Tile t)
-                {
-                    return t._id._x == tile._id._x
-                        && t._id._y == tile._id._y;
-                }
-                );
+            bool found = _openList.Contains(tile);
 
             return found;
         }

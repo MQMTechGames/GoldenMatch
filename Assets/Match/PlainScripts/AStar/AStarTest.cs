@@ -19,7 +19,7 @@ public class AStarTest : MonoBehaviour
 
     public void Awake()
     {
-        // create the astar
+       //  create the astar
         TiledAStar.create(out _aStar, _width, _height);
 
         // add all the tiles

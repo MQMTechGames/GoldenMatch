@@ -3710,11 +3710,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _debugMesh: {fileID: 400000, guid: 144f727dc8f31ce4a983f0b30852581e, type: 2}
-  _width: 45
-  _height: 45
-  _nonAccesibleProb: .300000012
-  _origin: {x: 0, y: 0}
-  _destination: {x: 9, y: 9}
+  _width: 60
+  _height: 60
+  _nonAccesibleProb: 0
+  _origin: {x: 25, y: 25}
+  _destination: {x: 25, y: 55}
+  _calculatePathByStep: 0
 --- !u!4 &1299123634
 Transform:
   m_ObjectHideFlags: 0
