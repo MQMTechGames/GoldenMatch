@@ -1178,6 +1178,7 @@ MonoBehaviour:
   _rotateVel: 2
   _rotationAccelByDistance: 3
   _trainningTeamId: 0
+  _teamController: {fileID: 0}
 --- !u!81 &125564911
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1898,6 +1899,7 @@ MonoBehaviour:
   _rotateVel: 2
   _rotationAccelByDistance: 3
   _trainningTeamId: 0
+  _teamController: {fileID: 0}
 --- !u!81 &234759952
 AudioListener:
   m_ObjectHideFlags: 0
@@ -4512,6 +4514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789ce609f28368e4092e7c0b7de19626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _trainningTeamId: 0
 --- !u!1 &561109511
 GameObject:
   m_ObjectHideFlags: 0
@@ -10020,6 +10023,7 @@ MonoBehaviour:
   _rotateVel: 2
   _rotationAccelByDistance: 3
   _trainningTeamId: 0
+  _teamController: {fileID: 0}
 --- !u!81 &1179427993
 AudioListener:
   m_ObjectHideFlags: 0
@@ -13605,6 +13609,7 @@ MonoBehaviour:
   _rotateVel: 2
   _rotationAccelByDistance: 3
   _trainningTeamId: 0
+  _teamController: {fileID: 0}
 --- !u!1 &1690753804
 GameObject:
   m_ObjectHideFlags: 0
@@ -15196,6 +15201,7 @@ MonoBehaviour:
   _rotateVel: 2
   _rotationAccelByDistance: 3
   _trainningTeamId: 0
+  _teamController: {fileID: 0}
 --- !u!81 &1903992495
 AudioListener:
   m_ObjectHideFlags: 0
