@@ -132,7 +132,8 @@ public class TrainningAI
             if(distanceToBall < 3f)
             {
                 _teamController.getBlackboard().addAction(ActionId.IS_RECOVERING_POSESSION, playerId);
-                
+                //_ballHandling = true;
+
                 return true;
             }
         }
@@ -151,12 +152,8 @@ public class TrainningAI
     
     bool recoverBallLoopCondition()
     {
-        //DebugUtils.log("ball transform is: " + _ballTransform.position);
-
         Vector3 dirToBall = _ballTransform.position - _transform.position;
         float distanceToBall = dirToBall.magnitude;
-
-        //DebugUtils.log("ball transform dist is: " + distanceToBall);
 
         return distanceToBall > kThresholdBallHandlingWaypoint;
     }
@@ -189,8 +186,9 @@ public class TrainningAI
     {
         float distance = MathUtils.getDistanceToPoint(_transform, _ballTransform.position);
 
-        bool doesHavePossesion =_ballHandling && distance < kThresholdToBallPossesion;
-        
+        //bool doesHavePossesion = _ballHandling && distance < kThresholdBallHandlingWaypoint * 2f;
+        bool doesHavePossesion = distance < 5f;
+
         return doesHavePossesion;
     }
 
@@ -198,31 +196,37 @@ public class TrainningAI
     {
         _teammateToPass = _teamController.getRandomTeammate();
 
-        if (_basePlayerAI == _teammateToPass)
-        {
-            return BTNodeResponse.STAY;
-        }
+        DebugUtils.log("trainningWithPossesionFaceToTeammate");
+        //if (_basePlayerAI == _teammateToPass)
+        //{
+        //    return BTNodeResponse.STAY;
+        //}
 
          return BTNodeResponse.LEAVE;
     }
 
     BTNodeResponse trainningWithPossesionFaceToTeammate()
     {
-        float rotatedAngle = TransformUtils.rotateToPointStep(_transform, _ballTransform.position, _rotateVel * Time.deltaTime);
+        float rotatedAngle = TransformUtils.rotateToPointStep(_transform, _teammateToPass.transform.position, _rotateVel * Time.deltaTime);
 
-        bool hasRotated = Mathf.Abs(rotatedAngle) <= MathUtils.kEpsilon;
+        DebugUtils.log("trainningWithPossesionFaceToTeammate");
 
-        return hasRotated ? BTNodeResponse.STAY : BTNodeResponse.LEAVE;
+//        bool hasRotated = Mathf.Abs(rotatedAngle) <= MathUtils.kEpsilon;
+
+  //      return hasRotated ? BTNodeResponse.STAY : BTNodeResponse.LEAVE;
+        return BTNodeResponse.LEAVE;
     }
 
     BTNodeResponse trainningWithPossesionPassToTeammate()
     {
-        Vector3 dir = MathUtils.getDirection(_transform, _teammateToPass.GetComponent<Transform>());
+        DebugUtils.log("trainningWithPossesionPassToTeammate");
+
+        Vector3 dir = MathUtils.getDirection(_transform, _teammateToPass.transform);
         float distance = dir.magnitude;
 
         dir.Normalize();
 
-        float forceMag = 15f * distance;
+        float forceMag = 15f * distance; //15f
         Vector3 force = dir * forceMag;
 
         _ballTransform.rigidbody.AddForce(force, ForceMode.Impulse);

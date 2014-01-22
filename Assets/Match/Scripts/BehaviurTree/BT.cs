@@ -84,6 +84,11 @@ public class BT
 
 	public void pushNode(BTNode node)
 	{
+        if (enableDebugLog)
+        {
+            DebugUtils.log("pushNode: " + node._name);
+        }
+
 		reset ();
 
 		_lastPushedNode = _currNode;

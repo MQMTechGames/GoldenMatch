@@ -35,6 +35,7 @@ public class BTNodePriority : BTNode
 	
 	public override void onStart ()
 	{
+        DebugUtils.log("BTNodePriority " + _name + " onStart");
 		_isInit = false;
 	}
 
@@ -50,9 +51,12 @@ public class BTNodePriority : BTNode
 	public override BTNodeResponse Update ()
 	{
 		if (_isInit) {
+            DebugUtils.log("BTNodePriority " + _name + " is already init leave");
+
 			return BTNodeResponse.LEAVE;
 		}
 
+        DebugUtils.log("BTNodePriority " + _name + "Updating");
 		_isInit = true;
 
 		int tempCount = -1;
@@ -79,7 +83,7 @@ public class BTNodePriority : BTNode
 				return BTNodeResponse.STAY;
 			}
 		}
-
+        DebugUtils.log("BTNodePriority " + _name + " all false");
 		// if no condition is succesful then leave
 		return BTNodeResponse.LEAVE;
 	}

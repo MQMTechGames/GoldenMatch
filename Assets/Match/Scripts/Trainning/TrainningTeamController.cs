@@ -40,6 +40,7 @@ public class TrainningTeamController : MonoBehaviour
 	void Update () {
         if (!isInit)
         {
+            isInit = true;
             initTrainning();
         }
 	}
@@ -64,9 +65,9 @@ public class TrainningTeamController : MonoBehaviour
     // helper methods
     public BasePlayerAI getRandomTeammate()
     {
-        int playerSpot = Random.Range(0, _players.Capacity -1);
+        int playerSpot = Random.Range(0, _players.Count -1);
 
-        BasePlayerAI teammate = _players[0];
+        BasePlayerAI teammate = _players[playerSpot];
 
         return teammate;
     }
