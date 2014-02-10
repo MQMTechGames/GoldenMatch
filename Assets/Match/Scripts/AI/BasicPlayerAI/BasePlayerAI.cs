@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BasePlayerAI : MonoBehaviour
+public class BasePlayerAI : IPlayer
 {
 	public bool _isAttackingTeam = true;
 
@@ -13,15 +13,11 @@ public class BasePlayerAI : MonoBehaviour
 
     public TrainninTeamId _trainningTeamId = new TrainninTeamId();
 
-	// private params
-	BT _bt = null;
-
     Dictionary<IInputPlayerControllerType, IInputPlayerController> _inputPlayerControllers = null;
     IInputPlayerController _inputPlayerController = null;
 
 	PlayerMovement _playerController = null;
 
-	Transform _transform = null;
 	Animator _animator = null;
 
 	Transform _ballTransform = null;
@@ -30,11 +26,11 @@ public class BasePlayerAI : MonoBehaviour
 
 	DoneHashIDs _hash = null;
 
-	TestPlayerAI _testPlayerAI = null;
-
-    TrainningAI _trainningAI = null;
-
     InputControllerManager _inputControllerManager = null;
+
+    // subtrees
+    public TestPlayerAI _testPlayerAI = null;
+    public TrainningAI _trainningAI = null;
 
     // Trainning
     TrainningController _trainningController = null;
@@ -47,46 +43,41 @@ public class BasePlayerAI : MonoBehaviour
 	{
 		// Get components
 		_playerController = new PlayerMovement(transform);
-		_transform = transform;
-		_animator = _transform.GetComponent<Animator>();
+		_animator = transform.GetComponent<Animator>();
 		_hash = GameObject.FindGameObjectWithTag(DoneTags.gameController).GetComponent<DoneHashIDs>();
 
-		DebugUtils.assert(null != _transform, "transform must exist");
+        DebugUtils.assert(null != transform, "transform must exist");
 		DebugUtils.assert(null != _animator, "animator must exist");
 
 		// Init objects
 		_animParams = AnimatorParams.sharedInstance();
-
         _inputControllerManager = ManagerContainer.sharedInstance().getInputControllerManager();
-
 		_ballTransform = GameObject.FindGameObjectWithTag("ball").transform;
 
         // trainning
         _trainningController = GameObject.FindObjectOfType<TrainningController>();
         DebugUtils.assert(null != _trainningController, "teamContorller can NOT be NULL");
+        _teamController = _trainningController.getTeamById(trainningTeamId);
 
-		// Test branch
-        TestPlayerAI.create(out _testPlayerAI, _transform);
+        // get branches
+        _testPlayerAI = gameObject.GetComponent<TestPlayerAI>();
+        if(null == _testPlayerAI)
+        {
+            _testPlayerAI = gameObject.AddComponent<TestPlayerAI>();
+        }
 
-        TrainningAI.create(out _trainningAI, this, transform, _teamController);
+        _trainningAI = gameObject.GetComponent<TrainningAI>();
+        if (null == _trainningAI)
+        {
+            _trainningAI = gameObject.AddComponent<TrainningAI>();
+        }
 
-		// create tree
-		createBTTree();
+        base.Awake();
 	}
 
     public void changePlayerController(IInputPlayerControllerType type)
     {
         _inputPlayerController = _inputPlayerControllers[type];
-    }
-
-    void Start()
-    {
-        // register to the controllers
-        _teamController = _trainningController.getTeamById(trainningTeamId);
-
-        _teamController.addPlayer(this);
-
-        _trainningAI._teamController = _teamController;
     }
 
     // Methods to receive inputs from the the team controller
@@ -100,9 +91,10 @@ public class BasePlayerAI : MonoBehaviour
         return _haveToRecoverPossesion;
     }
 
-	void createBTTree()
+    public override BT initStandalone()
 	{
-		BTBuilder builder = BTBuilder.create ("BasicPlayerAI").getBT(out _bt);
+        BT bt;
+		BTBuilder builder = BTBuilder.create ("BasicPlayerAI").getBT(out bt);
 
 		builder.addNode (null, "BasicPlayerAI", BTNodeType.BTNODE_PRIORITY)
 			.addNode ("BasicPlayerAI", "AttackingTeamPlayer", BTNodeType.BTNODE_PRIORITY, attackingTeamPlayerCondition)
@@ -136,18 +128,16 @@ public class BasePlayerAI : MonoBehaviour
             /****/.addNode("ForeverTrainning", _trainningAI.buildNode)
 			;
 
-        //_bt.pushNodeByName("UserInput");
+        return bt;
 	}
 
-    void FixedUpdate()
-	{
-		_bt.Update ();
-	}
-
-	public void pushState(string state)
-	{
-		_bt.pushNodeByName(state);
-	}
+    void Start()
+    {
+        if (getIsStandalone())
+        {
+            _teamController.addPlayer(this);
+        }
+    }
 
 	Vector3 getBallPosition()
 	{
@@ -178,8 +168,8 @@ public class BasePlayerAI : MonoBehaviour
 	private BTNodeResponse rotateToBall(float rotateVel)
 	{
 		BTNodeResponse response = BTNodeResponse.STAY;
-		
-		Transform target = GameObjectUtils.getChildByTag(_transform, "spine");
+
+        Transform target = GameObjectUtils.getChildByTag(transform, "spine");
 		DebugUtils.assert(null != target, "[BasePlayerAI->rotateBallCallback]: Tranform can NOT be NULL");
 		
 		float angle = _playerController.rotateToPoint(getBallPosition(), rotateVel * Time.deltaTime);
@@ -193,7 +183,7 @@ public class BasePlayerAI : MonoBehaviour
 
 	private BTNodeResponse goForwardToBallCallback()
 	{
-		float distance = MathUtils.getDistanceToPoint(_transform, getBallPosition());
+        float distance = MathUtils.getDistanceToPoint(transform, getBallPosition());
 
 
 		float minDistance = 0.25f;
@@ -232,9 +222,9 @@ public class BasePlayerAI : MonoBehaviour
 	private BTNodeResponse revocerTheBallCallback()
 	{
 
-		float angle = MathUtils.getAngleToPoint(_transform, getBallPosition());
+        float angle = MathUtils.getAngleToPoint(transform, getBallPosition());
 
-		Vector3 delta = getBallPosition() -_transform.position;
+        Vector3 delta = getBallPosition() - transform.position;
 		float distance = delta.magnitude;
 
 		if(Mathf.Abs(distance) < 0.5f || Mathf.Abs(angle) > 0.1f) {
@@ -304,7 +294,7 @@ public class BasePlayerAI : MonoBehaviour
 
         if (null != inputPlayerController)
         {
-            inputPlayerController.setTarget(_transform, _animator);
+            inputPlayerController.setTarget(transform, _animator);
             inputPlayerController.move();
 		}
 

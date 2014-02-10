@@ -55,7 +55,7 @@ namespace TeamData
             return false;
         }
 
-        public bool isPlayerAssignedTo(ActionId action, int id, bool remove = false)
+        public bool isPlayerAssignedTo(ActionId action, int id)
         {
             PlayerActionList actions = null;
             bool exist = getPlayersAssignedTo(action, out actions);
@@ -72,19 +72,14 @@ namespace TeamData
                 return false;
             }
 
-            if(remove)
-            {
-                actions.Remove(data);
-            }
-
             return true;
         }
 
-        public bool getPlayerAssignedTo(ActionId action, ref int id, bool remove = false)
+        public bool getPlayerAssignedTo(ActionId action, ref int id)
         {
             ActionData data = null;
 
-            if (getPlayerAssignedTo(action, out data, remove))
+            if (getPlayerAssignedTo(action, out data))
             {
                 id = data._id;
 
@@ -94,18 +89,13 @@ namespace TeamData
             return false;
         }
 
-        public bool getPlayerAssignedTo(ActionId action, out ActionData data, bool remove = false)
+        public bool getPlayerAssignedTo(ActionId action, out ActionData data)
         {
             PlayerActionList allActions = null;
 
             bool exist = _actions.TryGetValue(action, out allActions);
 
             data = allActions[0];
-
-            if(remove)
-            {
-                allActions.RemoveAt(0);
-            }
 
             return exist;
         }

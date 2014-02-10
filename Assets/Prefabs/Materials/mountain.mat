@@ -1,0 +1,150 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: mountain
+  m_Shader: {fileID: 4800000, guid: 24d2515b7a9a42c4fbba47cc83cacebf, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _time
+        second: .5
+      data:
+        first:
+          name: _Shininess
+        second: .078125
+      data:
+        first:
+          name: _Normal_influence
+        second: 1
+      data:
+        first:
+          name: _base_height
+        second: .200000003
+      data:
+        first:
+          name: _height_blur
+        second: .699999988
+      data:
+        first:
+          name: _RimPower
+        second: 1.01999998
+      data:
+        first:
+          name: _top_rim_offset
+        second: 0
+      data:
+        first:
+          name: _top_rim_blur
+        second: 0
+      data:
+        first:
+          name: _Rimpower
+        second: 1
+      data:
+        first:
+          name: _FrequencyX
+        second: 1
+      data:
+        first:
+          name: _FrequencyZ
+        second: 1
+      data:
+        first:
+          name: _ScaleX
+        second: .5
+      data:
+        first:
+          name: _ScaleZ
+        second: 1
+      data:
+        first:
+          name: _Speed
+        second: .5
+      data:
+        first:
+          name: _rim_power
+        second: -.482142866
+      data:
+        first:
+          name: _Parallax
+        second: .0199999996
+      data:
+        first:
+          name: _fresnelPow
+        second: 1
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: .661764741, g: .340191036, b: .0778546706, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: .5, g: .5, b: .5, a: 1}
+      data:
+        first:
+          name: _color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _top_color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _bottom_color
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _Rim_Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _RimColor
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Vertex_color
+        second: {r: .889705896, g: .189716727, b: .189716727, a: 1}
+      data:
+        first:
+          name: _rim_color
+        second: {r: .933823526, g: .199124157, b: .199124157, a: 1}
+      data:
+        first:
+          name: _DiffuseColor
+        second: {r: 1, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _fresnelColor
+        second: {r: .941176474, g: .843431532, b: .0553633198, a: 1}

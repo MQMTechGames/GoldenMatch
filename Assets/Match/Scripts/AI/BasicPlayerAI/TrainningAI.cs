@@ -8,71 +8,87 @@ using System.Reflection;
 
 using TeamData;
 
-public class TrainningAI
+class BallHandler
 {
-    static float kThresholdToApproachBall = 0.75f;
-    static float kThresholdBallHandlingApproachBall = 0.60f;
-    static float kThresholdBallHandlingWaypoint = 1.5f;
-    static float kThresholdToApproachBallToShot = 0.75f;
+    float _lasTimePass = 0;
+    public Transform _ball = null;
 
-    static float kThresholdToBallPossesion = 2.5f;
+    public void passTo(Transform point)
+    {
+        float currTime = Time.timeSinceLevelLoad;
+        if (currTime - _lasTimePass < 2f)
+        {
+            return;
+        }
 
-    public bool _isAttackingTeam = true;
+        // do pass
+        _lasTimePass = Time.timeSinceLevelLoad;
 
+        Vector3 dir = MathUtils.getDirection(_ball, point);
+        float distance = dir.magnitude;
+
+        dir.Normalize();
+
+        float forceMag = 2.0f * distance; //15f
+        Vector3 force = dir * forceMag;
+
+        _ball.rigidbody.AddForce(force, ForceMode.Impulse);
+    }
+}
+
+public class TrainningAI : IPlayer
+{
+    // constants
+    static float kThresholdBallHandlingWaypoint = 0.5f;
+
+    // Tweakeable variables
     public float _runVelocity = 5.5f;
     public float _dampTime = 0.1f;
     public float _rotateVel = 2.0f;
     public float _rotationAccelByDistance = 3.0f;
 
-    // private params
-    BT _bt = null;
-
     PlayerMovement _playerController = null;
-
-    Transform _transform = null;
     Animator _animator = null;
     Transform _ballTransform = null;
     Transform _shootTransform = null;
     AnimatorParams _animParams = null;
     DoneHashIDs _hash = null;
-    TestPlayerAI _testPlayerAI = null;
     
-    Vector3 _waypointDir = new Vector3();
-    Vector3 _startingPoint = new Vector3();
-
     public TrainningTeamController _teamController = null;
-    bool _ballHandling = false;
-    BasePlayerAI _basePlayerAI = null;
 
-    // teammate to pass the ball
-    BasePlayerAI _teammateToPass = null;
+    IPlayer _teammateToPass = null;
 
-    public static void create(out TrainningAI testPlayerAI, BasePlayerAI basePlayeAI, Transform transform, TrainningTeamController teamController)
+    BallHandler _ballHandler = new BallHandler();
+
+    public override void Awake()
     {
-        testPlayerAI = new TrainningAI(basePlayeAI, transform, teamController);
-    }
-
-    public TrainningAI(BasePlayerAI basePlayeAI, Transform transform, TrainningTeamController teamController)
-    {
-        // Assign parameters
-        _basePlayerAI = basePlayeAI;
-        _transform = transform;
-        _teamController = teamController;
-
         // Get components
         _playerController = new PlayerMovement(transform);
-        _animator = _transform.GetComponent<Animator>();
+        _animator = transform.GetComponent<Animator>();
         _hash = GameObject.FindGameObjectWithTag(DoneTags.gameController).GetComponent<DoneHashIDs>();
         _shootTransform = GameObjectUtils.getComponentByEntityName<Transform>("shotPosition");
-
-        DebugUtils.assert(null != _shootTransform, "_shotPosition must exist");
-        DebugUtils.assert(null != _transform, "_transform must exist");
-        DebugUtils.assert(null != _animator, "_animator must exist");
 
         // Init objects
         _animParams = AnimatorParams.sharedInstance();
 
         _ballTransform = GameObject.FindGameObjectWithTag("ball").transform;
+        Debug.Log(_ballTransform);
+        _ballHandler._ball = _ballTransform;
+
+        base.Awake();
+    }
+
+    public override BT initStandalone()
+    {
+        BT bt;
+
+        BTBuilder builder = BTBuilder.create("trainningAI").getBT(out bt);
+        builder.addNode(null, "trainningAI", BTNodeType.BTNODE_PRIORITY)
+            .addNode("trainningAI", buildNode);
+
+        _teamController.addPlayer(this);
+
+        return bt;
     }
 
     public void buildNode(string parentName, BTBuilder builder)
@@ -100,6 +116,9 @@ public class TrainningAI
             /**/.addNode("trainning", "trainningWithoutPossesion", BTNodeType.BTNODE_SEQUENCE, null)
             /**//**/.addNode("trainningWithoutPossesion", "trainningWithoutPossesionFaceToBall", BTNodeType.BTNODE_LEAF, null, trainningWithoutPossesionFaceToBall)
             ;
+
+        // save behaviur tree
+        builder.getBT(out _bt);
     }
 
     // Recovering
@@ -113,26 +132,34 @@ public class TrainningAI
     bool trainningPlayerdoesCanRecoverTheBall()
     {
         // Check the shared blackboard
-        int playerId = _basePlayerAI.gameObject.GetInstanceID();
+        int playerId = GetInstanceID();
 
-        bool mustRecoverPossesion =_teamController.getBlackboard().isPlayerAssignedTo(ActionId.DO_RECOVER_POSSESION, playerId, true);
-        if (mustRecoverPossesion)
-        {
-            _teamController.getBlackboard().addAction(ActionId.IS_RECOVERING_POSESSION, playerId);
+        //bool mustRecoverPossesion =_teamController.getBlackboard().isPlayerAssignedTo(ActionId.DO_RECOVER_POSSESION, playerId);
+        //if (mustRecoverPossesion)
+        //{
+        //    _teamController.getBlackboard().addAction(ActionId.IS_RECOVERING_POSESSION, playerId);
 
-            return true;
-        }
+        //    return true;
+        //}
+
+        // if no one is asigned
+        //int numPlayersAssigneds = _teamController.getBlackboard().getNumPlayersAssignedTo(ActionId.DO_RECOVER_POSSESION);
+        //if(numPlayersAssigneds > 0)
+        //{
+        //    return false;
+        //}
 
         // I'm not assignet to do the job but... I still will try because I'm worth it
+
+        Debug.Log(_teamController);
+
         int numPlayers = _teamController.getBlackboard().getNumPlayersAssignedTo(ActionId.IS_RECOVERING_POSESSION);
         if (0 == numPlayers)
         {
-            float distanceToBall = MathUtils.getDistanceToPoint(_transform, _ballTransform.position);
-            
-            if(distanceToBall < 3f)
+            //float distanceToBall = MathUtils.getDistanceToPoint(transform(), _ballTransform.position);
+            //if(distanceToBall < 2f)
             {
                 _teamController.getBlackboard().addAction(ActionId.IS_RECOVERING_POSESSION, playerId);
-                //_ballHandling = true;
 
                 return true;
             }
@@ -143,16 +170,17 @@ public class TrainningAI
 
     BTNodeResponse trainningRecoverUnassignAction()
     {
-        int playerId = _basePlayerAI.gameObject.GetInstanceID();
+        int playerId = GetInstanceID();
 
         _teamController.getBlackboard().removePlayerFromAction(playerId, ActionId.IS_RECOVERING_POSESSION);
+        _teamController.setBallRecovered(true);
 
         return BTNodeResponse.LEAVE;
     }
     
     bool recoverBallLoopCondition()
     {
-        Vector3 dirToBall = _ballTransform.position - _transform.position;
+        Vector3 dirToBall = _ballTransform.position - transform.position;
         float distanceToBall = dirToBall.magnitude;
 
         return distanceToBall > kThresholdBallHandlingWaypoint;
@@ -160,7 +188,7 @@ public class TrainningAI
 
     BTNodeResponse recoverBallInitialRotation()
     {
-        float rotatedAngle = TransformUtils.rotateToPointStep(_transform, _ballTransform.position, _rotateVel * Time.deltaTime);
+        float rotatedAngle = TransformUtils.rotateToPointStep(transform, _ballTransform.position, _rotateVel * Time.deltaTime);
 
         bool hasRotated = Mathf.Abs(rotatedAngle) <= MathUtils.kEpsilon;
 
@@ -169,7 +197,7 @@ public class TrainningAI
 
     BTNodeResponse recoveringRotateToBallStep()
     {
-        float rotatedAngle = TransformUtils.rotateToPointStep(_transform, _ballTransform.position, 9999f);
+        float rotatedAngle = TransformUtils.rotateToPointStep(transform, _ballTransform.position, 9999f);
 
         return BTNodeResponse.LEAVE;
     }
@@ -184,10 +212,10 @@ public class TrainningAI
 
     bool trainningPlayerDoesHavePossesion()
     {
-        float distance = MathUtils.getDistanceToPoint(_transform, _ballTransform.position);
+        float distance = MathUtils.getDistanceToPoint(transform, _ballTransform.position);
 
         //bool doesHavePossesion = _ballHandling && distance < kThresholdBallHandlingWaypoint * 2f;
-        bool doesHavePossesion = distance < 5f;
+        bool doesHavePossesion =  distance < 1.0f;
 
         return doesHavePossesion;
     }
@@ -197,46 +225,37 @@ public class TrainningAI
         _teammateToPass = _teamController.getRandomTeammate();
 
         DebugUtils.log("trainningWithPossesionFaceToTeammate");
-        //if (_basePlayerAI == _teammateToPass)
-        //{
-        //    return BTNodeResponse.STAY;
-        //}
+        if (GetInstanceID() == _teammateToPass.GetInstanceID())
+        {
+            return BTNodeResponse.STAY;
+        }
 
          return BTNodeResponse.LEAVE;
     }
 
     BTNodeResponse trainningWithPossesionFaceToTeammate()
     {
-        float rotatedAngle = TransformUtils.rotateToPointStep(_transform, _teammateToPass.transform.position, _rotateVel * Time.deltaTime);
+        float rotatedAngle = TransformUtils.rotateToPointStep(transform, _teammateToPass.transform.position, _rotateVel * Time.deltaTime);
 
         DebugUtils.log("trainningWithPossesionFaceToTeammate");
 
-//        bool hasRotated = Mathf.Abs(rotatedAngle) <= MathUtils.kEpsilon;
+        bool hasRotated = Mathf.Abs(rotatedAngle) <= MathUtils.kEpsilon;
 
-  //      return hasRotated ? BTNodeResponse.STAY : BTNodeResponse.LEAVE;
-        return BTNodeResponse.LEAVE;
+        return hasRotated ? BTNodeResponse.STAY : BTNodeResponse.LEAVE;
     }
 
     BTNodeResponse trainningWithPossesionPassToTeammate()
     {
         DebugUtils.log("trainningWithPossesionPassToTeammate");
 
-        Vector3 dir = MathUtils.getDirection(_transform, _teammateToPass.transform);
-        float distance = dir.magnitude;
-
-        dir.Normalize();
-
-        float forceMag = 15f * distance; //15f
-        Vector3 force = dir * forceMag;
-
-        _ballTransform.rigidbody.AddForce(force, ForceMode.Impulse);
+        _ballHandler.passTo(_teammateToPass.transform);
 
         return BTNodeResponse.LEAVE;
     }
 
     BTNodeResponse trainningWithoutPossesionFaceToBall()
     {
-        float rotatedAngle = TransformUtils.rotateToPointStep(_transform, _ballTransform.position, _rotateVel * 10 * Time.deltaTime);
+        float rotatedAngle = TransformUtils.rotateToPointStep(transform, _ballTransform.position, _rotateVel * 10 * Time.deltaTime);
 
         return BTNodeResponse.LEAVE;
     }

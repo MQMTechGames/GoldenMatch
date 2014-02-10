@@ -7,7 +7,7 @@ public class TrainningTeamController : MonoBehaviour
 {
     public TrainninTeamId _trainningTeamId = new TrainninTeamId();
 
-    List<BasePlayerAI> _players = new List<BasePlayerAI>();
+    List<IPlayer> _players = new List<IPlayer>();
     TrainningController _trainningController = null;
     bool isInit = false;
 
@@ -15,7 +15,7 @@ public class TrainningTeamController : MonoBehaviour
 
     Blackboard _blackboard = new Blackboard();
 
-    public void addPlayer(BasePlayerAI ai)
+    public void addPlayer(IPlayer ai)
     {
         if(existsPlayer(ai)) {
             return;
@@ -24,7 +24,7 @@ public class TrainningTeamController : MonoBehaviour
         _players.Add(ai);
     }
 
-    bool existsPlayer(BasePlayerAI ai)
+    bool existsPlayer(IPlayer ai)
     {
         return _players.Contains(ai);
     }
@@ -47,12 +47,12 @@ public class TrainningTeamController : MonoBehaviour
 
     public void initTrainning()
     {
-        foreach (BasePlayerAI player in _players)
+        foreach (IPlayer player in _players)
         {
             player.pushState("ForeverTrainning");
         }
 
-        BasePlayerAI rand = getRandomTeammate();
+        IPlayer rand = getRandomTeammate();
         _blackboard.addAction(ActionId.DO_RECOVER_POSSESION, rand.gameObject.GetInstanceID());
     }
 
@@ -63,11 +63,11 @@ public class TrainningTeamController : MonoBehaviour
     }
 
     // helper methods
-    public BasePlayerAI getRandomTeammate()
+    public IPlayer getRandomTeammate()
     {
-        int playerSpot = Random.Range(0, _players.Count -1);
+        int playerSpot = Random.Range(0, _players.Count);
 
-        BasePlayerAI teammate = _players[playerSpot];
+        IPlayer teammate = _players[playerSpot];
 
         return teammate;
     }
@@ -80,5 +80,10 @@ public class TrainningTeamController : MonoBehaviour
     public void setBallRecovered(bool isRecovered)
     {
         isBallNeutral = !isRecovered;
+    }
+
+    public bool getHaveBallPossesion()
+    {
+        return !isBallNeutral;
     }
 }

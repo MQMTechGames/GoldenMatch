@@ -25,8 +25,7 @@ public class BT
 
 	public void Update()
 	{
-		if (   BTNodeResponse.LEAVE == _lastNodeState
-		    ) 
+		if (BTNodeResponse.LEAVE == _lastNodeState)
 		{
 			if(_lastPushedNode == _currNode) {
 				reset();

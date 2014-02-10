@@ -6,14 +6,14 @@ using UnityEditor;
 using System;
 using System.Reflection;
 
-public class TestPlayerAI
+public class TestPlayerAI : IPlayer
 {
 	static float kThresholdToApproachBall = 0.75f;
 	static float kThresholdBallHandlingApproachBall = 0.60f;
     static float kThresholdBallHandlingWaypoint = 1.5f;
     static float kThresholdToApproachBallToShot = 0.75f;
 
-	public bool _isAttackingTeam = true;
+	bool _isAttackingTeam = true;
 	
 	public float _runVelocity = 5.5f;
 	public float _dampTime = 0.1f;
@@ -31,16 +31,11 @@ public class TestPlayerAI
 	Transform _shootTransform = null;
 	AnimatorParams _animParams = null;
 	DoneHashIDs _hash = null;
-	TestPlayerAI _testPlayerAI = null;
-
 	Vector3 _waypointDir;
 
-	public static void create(out TestPlayerAI testPlayerAI, Transform transform)
-	{
-		testPlayerAI = new TestPlayerAI(transform);
-	}
+    public TrainningTeamController _teamController = null;
 
-	public TestPlayerAI(Transform transform)
+	void Awake()
 	{
 		// Initialize objects
 		_waypointDir = new Vector3();
@@ -61,42 +56,53 @@ public class TestPlayerAI
 		
 		_ballTransform = GameObject.FindGameObjectWithTag("ball").transform;
 	}
+
+    public override BT initStandalone()
+    {
+        BT bt;
+
+        BTBuilder builder = BTBuilder.create("TestAI").getBT(out bt);
+        builder.addNode(null, "TestAI", BTNodeType.BTNODE_PRIORITY)
+            .addNode("TestAI", buildNode);
+
+        _teamController.addPlayer(this);
+
+        return bt;
+    }
 	
 	public void buildNode(string parentName, BTBuilder builder)
 	{
 		builder.
 			addNode (parentName, "TestPlayerAI", BTNodeType.BTNODE_SEQUENCE)
 
-                /**/.addNode ("TestPlayerAI", "clearConsole", BTNodeType.BTNODE_LEAF, null, clearConsole)
+            /**/.addNode ("TestPlayerAI", "clearConsole", BTNodeType.BTNODE_LEAF, null, clearConsole)
 
-				// Recovering
-				/**/.addNode ("TestPlayerAI", "RecoverBall", BTNodeType.BTNODE_SEQUENCE, null)
-				/**//**/.addNode ("RecoverBall", "recoverBallInitialRotation", BTNodeType.BTNODE_LEAF, null, recoverBallInitialRotation)
-				/**//**/.addNode ("RecoverBall", "recoverBallLoop", BTNodeType.BTNODE_WHILE, recoverBallLoopCondition)
-				/**//**//**/.addNode ("recoverBallLoop", "recoverBallLoopStep", BTNodeType.BTNODE_SEQUENCE)
-				/**//**//**//**/.addNode ("recoverBallLoopStep", "recoveringRotateToBallStep", BTNodeType.BTNODE_LEAF, null, recoveringRotateToBallStep)
-				/**//**//**//**/.addNode ("recoverBallLoopStep", "recoveringGoToBallStep", BTNodeType.BTNODE_LEAF, null, recoveringGoToBallStep)
+			// Recovering
+			/**/.addNode ("TestPlayerAI", "RecoverBall", BTNodeType.BTNODE_SEQUENCE, null)
+			/**//**/.addNode ("RecoverBall", "recoverBallInitialRotation", BTNodeType.BTNODE_LEAF, null, recoverBallInitialRotation)
+			/**//**/.addNode ("RecoverBall", "recoverBallLoop", BTNodeType.BTNODE_WHILE, recoverBallLoopCondition)
+			/**//**//**/.addNode ("recoverBallLoop", "recoverBallLoopStep", BTNodeType.BTNODE_SEQUENCE)
+			/**//**//**//**/.addNode ("recoverBallLoopStep", "recoveringRotateToBallStep", BTNodeType.BTNODE_LEAF, null, recoveringRotateToBallStep)
+			/**//**//**//**/.addNode ("recoverBallLoopStep", "recoveringGoToBallStep", BTNodeType.BTNODE_LEAF, null, recoveringGoToBallStep)
 
-				// BallHandling
-				/**/.addNode ("TestPlayerAI", "ballHandlingToWaypoint", BTNodeType.BTNODE_PRIORITY, null)
-				/**//**/.addNode ("ballHandlingToWaypoint", "ballHandlingToWaypointLoop", BTNodeType.BTNODE_WHILE, ballHandlingToWaypointLoopCondition)
-				/**//**//**/.addNode ("ballHandlingToWaypointLoop", "BallHandlingToWaypointStep", BTNodeType.BTNODE_SEQUENCE)
-				/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingRotateToBall", BTNodeType.BTNODE_LEAF, null, ballHandlingRotateToBall)
-				/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingGoToBallStep", BTNodeType.BTNODE_LEAF, null, ballHandlingGoToBallStep)
-				/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingCalculateWaypointDir", BTNodeType.BTNODE_LEAF, null, ballHandlingCalculateWaypointDir)
-				/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingPushBallToWaypoint", BTNodeType.BTNODE_LEAF, null, ballHandlingPushBallToWaypoint)
+			// BallHandling
+			/**/.addNode ("TestPlayerAI", "ballHandlingToWaypoint", BTNodeType.BTNODE_PRIORITY, null)
+			/**//**/.addNode ("ballHandlingToWaypoint", "ballHandlingToWaypointLoop", BTNodeType.BTNODE_WHILE, ballHandlingToWaypointLoopCondition)
+			/**//**//**/.addNode ("ballHandlingToWaypointLoop", "BallHandlingToWaypointStep", BTNodeType.BTNODE_SEQUENCE)
+			/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingRotateToBall", BTNodeType.BTNODE_LEAF, null, ballHandlingRotateToBall)
+			/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingGoToBallStep", BTNodeType.BTNODE_LEAF, null, ballHandlingGoToBallStep)
+			/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingCalculateWaypointDir", BTNodeType.BTNODE_LEAF, null, ballHandlingCalculateWaypointDir)
+			/**//**//**//**/.addNode ("BallHandlingToWaypointStep", "ballHandlingPushBallToWaypoint", BTNodeType.BTNODE_LEAF, null, ballHandlingPushBallToWaypoint)
 
-				// Shotting
-				/**/.addNode ("TestPlayerAI", "shooting", BTNodeType.BTNODE_SEQUENCE)
-                /**//**/.addNode("shooting", "shootingPrepareToShotLoop", BTNodeType.BTNODE_WHILE, shootingPrepareToShotLoopCondition)
-                /**//**//**/.addNode("shootingPrepareToShotLoop", "shootingRotateToBall", BTNodeType.BTNODE_LEAF, null, ballHandlingRotateToBall)
-                /**//**//**/.addNode("shootingPrepareToShotLoop", "shootingGoToBallStep", BTNodeType.BTNODE_LEAF, null, ballHandlingGoToBallStep)
-                /**//**/.addNode("shooting", "shootingDoShot", BTNodeType.BTNODE_LEAF, null, shootingDoShot)
-				;
+			// Shotting
+			/**/.addNode ("TestPlayerAI", "shooting", BTNodeType.BTNODE_SEQUENCE)
+            /**//**/.addNode("shooting", "shootingPrepareToShotLoop", BTNodeType.BTNODE_WHILE, shootingPrepareToShotLoopCondition)
+            /**//**//**/.addNode("shootingPrepareToShotLoop", "shootingRotateToBall", BTNodeType.BTNODE_LEAF, null, ballHandlingRotateToBall)
+            /**//**//**/.addNode("shootingPrepareToShotLoop", "shootingGoToBallStep", BTNodeType.BTNODE_LEAF, null, ballHandlingGoToBallStep)
+            /**//**/.addNode("shooting", "shootingDoShot", BTNodeType.BTNODE_LEAF, null, shootingDoShot)
+			;
 	}
     
-    // shooting
-
     bool shootingPrepareToShotLoopCondition()
     {
         float distance = MathUtils.getDistanceToPoint(_transform, _ballTransform.position);
