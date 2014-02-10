@@ -29,7 +29,12 @@ class BallHandler
 
         dir.Normalize();
 
-        float forceMag = 2.0f * distance; //15f
+        float forceMag = 1.35f * distance;
+
+        if(forceMag > 20.0f)
+        {
+            forceMag = 20.0f;
+        }
         Vector3 force = dir * forceMag;
 
         _ball.rigidbody.AddForce(force, ForceMode.Impulse);
@@ -39,7 +44,7 @@ class BallHandler
 public class TrainningAI : IPlayer
 {
     // constants
-    static float kThresholdBallHandlingWaypoint = 0.5f;
+    static float kDistanceBallInControll = 1.0f;
 
     // Tweakeable variables
     public float _runVelocity = 5.5f;
@@ -59,6 +64,8 @@ public class TrainningAI : IPlayer
     IPlayer _teammateToPass = null;
 
     BallHandler _ballHandler = new BallHandler();
+
+    float _waittingTime = 0.0f;
 
     public override void Awake()
     {
@@ -101,6 +108,8 @@ public class TrainningAI : IPlayer
             /**//**/.addNode("trainningWithPossesion", "trainningWithPossesionFindTeammate", BTNodeType.BTNODE_LEAF, null, trainningWithPossesionFindTeammate)
             /**//**/.addNode("trainningWithPossesion", "trainningWithPossesionFaceToTeammate", BTNodeType.BTNODE_LEAF, null, trainningWithPossesionFaceToTeammate)
             /**//**/.addNode("trainningWithPossesion", "trainningWithPossesionPassToTeammate", BTNodeType.BTNODE_LEAF, null, trainningWithPossesionPassToTeammate)
+            /**//**/.addNode("trainningWithPossesion", "prepareToWait", BTNodeType.BTNODE_LEAF, null, prepareToWait)
+            /**//**/.addNode("trainningWithPossesion", "trainningWait", BTNodeType.BTNODE_LEAF, null, trainningWait)
 
             /**/.addNode("trainning", "trainningRecoverPossesion", BTNodeType.BTNODE_SEQUENCE, trainningPlayerdoesCanRecoverTheBall)
             // Recovering
@@ -112,7 +121,7 @@ public class TrainningAI : IPlayer
             /**//**/.addNode("trainningRecoverPossesion", "trainningResetVel", BTNodeType.BTNODE_LEAF, null, trainningResetVel)
             /**//**/.addNode("trainningRecoverPossesion", "trainningRecoverUnassignAction", BTNodeType.BTNODE_LEAF, null, trainningRecoverUnassignAction)
 
-          // nonPosession
+            // nonPosession
             /**/.addNode("trainning", "trainningWithoutPossesion", BTNodeType.BTNODE_SEQUENCE, null)
             /**//**/.addNode("trainningWithoutPossesion", "trainningWithoutPossesionFaceToBall", BTNodeType.BTNODE_LEAF, null, trainningWithoutPossesionFaceToBall)
             ;
@@ -129,38 +138,38 @@ public class TrainningAI : IPlayer
         return  BTNodeResponse.LEAVE;
     }
 
+    // Recovering
+    BTNodeResponse prepareToWait()
+    {
+        _waittingTime = 0.0f;
+
+        return BTNodeResponse.LEAVE;
+    }
+
+    // Recovering
+    BTNodeResponse trainningWait()
+    {
+        _waittingTime += Time.deltaTime;
+        if (_waittingTime > 1.5f)
+        {
+            return BTNodeResponse.LEAVE;
+        }
+
+        return BTNodeResponse.STAY;
+    }
+    
     bool trainningPlayerdoesCanRecoverTheBall()
     {
-        // Check the shared blackboard
-        int playerId = GetInstanceID();
-
-        //bool mustRecoverPossesion =_teamController.getBlackboard().isPlayerAssignedTo(ActionId.DO_RECOVER_POSSESION, playerId);
-        //if (mustRecoverPossesion)
-        //{
-        //    _teamController.getBlackboard().addAction(ActionId.IS_RECOVERING_POSESSION, playerId);
-
-        //    return true;
-        //}
-
-        // if no one is asigned
-        //int numPlayersAssigneds = _teamController.getBlackboard().getNumPlayersAssignedTo(ActionId.DO_RECOVER_POSSESION);
-        //if(numPlayersAssigneds > 0)
-        //{
-        //    return false;
-        //}
-
-        // I'm not assignet to do the job but... I still will try because I'm worth it
-
         Debug.Log(_teamController);
 
         int numPlayers = _teamController.getBlackboard().getNumPlayersAssignedTo(ActionId.IS_RECOVERING_POSESSION);
         if (0 == numPlayers)
         {
-            //float distanceToBall = MathUtils.getDistanceToPoint(transform(), _ballTransform.position);
-            //if(distanceToBall < 2f)
+            IPlayer player = _teamController.getClosesPlayerTo(_ballTransform.position);
+            if(GetInstanceID() == player.GetInstanceID())
             {
-                _teamController.getBlackboard().addAction(ActionId.IS_RECOVERING_POSESSION, playerId);
-
+                _teamController.getBlackboard().addAction(ActionId.IS_RECOVERING_POSESSION, GetInstanceID());
+                
                 return true;
             }
         }
@@ -173,7 +182,6 @@ public class TrainningAI : IPlayer
         int playerId = GetInstanceID();
 
         _teamController.getBlackboard().removePlayerFromAction(playerId, ActionId.IS_RECOVERING_POSESSION);
-        _teamController.setBallRecovered(true);
 
         return BTNodeResponse.LEAVE;
     }
@@ -183,7 +191,7 @@ public class TrainningAI : IPlayer
         Vector3 dirToBall = _ballTransform.position - transform.position;
         float distanceToBall = dirToBall.magnitude;
 
-        return distanceToBall > kThresholdBallHandlingWaypoint;
+        return distanceToBall > kDistanceBallInControll;
     }
 
     BTNodeResponse recoverBallInitialRotation()

@@ -914,7 +914,7 @@ Transform:
   m_PrefabInternal: {fileID: 971813831}
   m_GameObject: {fileID: 234759949}
   m_LocalRotation: {x: 0, y: -.707091331, z: 0, w: .707122266}
-  m_LocalPosition: {x: 14.4270468, y: 5.59539413, z: 6.62586451}
+  m_LocalPosition: {x: 17.6543598, y: 5.59539413, z: 7.6581254}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 776934754}
@@ -934,7 +934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31facb7f67ab7843affad4accdc60ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isStandalone: 1
+  _isStandalone: -1
   _runVelocity: 3.07999992
   _dampTime: 3.99000001
   _rotateVel: 3.07999992
@@ -1021,7 +1021,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!136 &234759955
 CapsuleCollider:
@@ -2313,7 +2313,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 588342230}
   m_LocalRotation: {x: 0, y: -.707091272, z: 0, w: .707122326}
-  m_LocalPosition: {x: -3.91848159, y: -5.75670862, z: 5.07917786}
+  m_LocalPosition: {x: 11.0424614, y: -5.75670862, z: -4.32706261}
   m_LocalScale: {x: .25, y: .25, z: .25}
   m_Children: []
   m_Father: {fileID: 385617851}
@@ -2331,7 +2331,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!23 &588342233
 Renderer:
   m_ObjectHideFlags: 0
@@ -3803,7 +3803,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400036, guid: 4b2e839426dade64eac932034c45179b, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 14.4270468
+      value: 17.6543598
       objectReference: {fileID: 0}
     - target: {fileID: 400036, guid: 4b2e839426dade64eac932034c45179b, type: 2}
       propertyPath: m_LocalPosition.y
@@ -3811,7 +3811,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400036, guid: 4b2e839426dade64eac932034c45179b, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 6.62586451
+      value: 7.6581254
       objectReference: {fileID: 0}
     - target: {fileID: 400036, guid: 4b2e839426dade64eac932034c45179b, type: 2}
       propertyPath: m_LocalRotation.x
@@ -3839,7 +3839,7 @@ Prefab:
       objectReference: {fileID: 9100000, guid: 1db68d53accfc2c4893b2b3e5707d6e7, type: 2}
     - target: {fileID: 5400000, guid: 4b2e839426dade64eac932034c45179b, type: 2}
       propertyPath: m_Constraints
-      value: 112
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 4b2e839426dade64eac932034c45179b, type: 2}
       propertyPath: m_Enabled
@@ -5859,7 +5859,7 @@ Transform:
   m_PrefabInternal: {fileID: 1791285794}
   m_GameObject: {fileID: 1686803326}
   m_LocalRotation: {x: 0, y: -.707091331, z: 0, w: .707122266}
-  m_LocalPosition: {x: 7.125453, y: 5.59539413, z: 10.8095083}
+  m_LocalPosition: {x: -5.36141014, y: 5.59539413, z: 19.9433346}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 566786987}
@@ -5879,7 +5879,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31facb7f67ab7843affad4accdc60ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isStandalone: 1
+  _isStandalone: -1
   _runVelocity: 5.5
   _dampTime: .100000001
   _rotateVel: 2
@@ -5966,7 +5966,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!136 &1686803332
 CapsuleCollider:
@@ -6298,7 +6298,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400134, guid: 3f9dcd8e59aef9d4a8fb4454f21a8741, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 7.125453
+      value: -5.36141014
       objectReference: {fileID: 0}
     - target: {fileID: 400134, guid: 3f9dcd8e59aef9d4a8fb4454f21a8741, type: 2}
       propertyPath: m_LocalPosition.y
@@ -6306,7 +6306,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400134, guid: 3f9dcd8e59aef9d4a8fb4454f21a8741, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 10.8095083
+      value: 19.9433346
       objectReference: {fileID: 0}
     - target: {fileID: 400134, guid: 3f9dcd8e59aef9d4a8fb4454f21a8741, type: 2}
       propertyPath: m_LocalRotation.x
@@ -6339,6 +6339,10 @@ Prefab:
     - target: {fileID: 11400000, guid: 3f9dcd8e59aef9d4a8fb4454f21a8741, type: 2}
       propertyPath: _testPlayerAI
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400000, guid: 3f9dcd8e59aef9d4a8fb4454f21a8741, type: 2}
+      propertyPath: m_Constraints
+      value: 116
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400000, guid: 3f9dcd8e59aef9d4a8fb4454f21a8741, type: 2}

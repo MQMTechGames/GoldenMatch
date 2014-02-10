@@ -72,18 +72,22 @@ public class TrainningTeamController : MonoBehaviour
         return teammate;
     }
 
-    public bool doesCanRecoverTheBall()
+    public IPlayer getClosesPlayerTo(Vector3 pos)
     {
-        return isBallNeutral;
+        float minDist = 99999;
+        IPlayer minPlayer = null;
+
+        foreach(IPlayer player in _players)
+        {
+            float dist = Vector3.Distance(pos, player.transform.position);
+            if(dist < minDist)
+            {
+                minDist = dist;
+                minPlayer = player;
+            }
+        }
+
+        return minPlayer;
     }
 
-    public void setBallRecovered(bool isRecovered)
-    {
-        isBallNeutral = !isRecovered;
-    }
-
-    public bool getHaveBallPossesion()
-    {
-        return !isBallNeutral;
-    }
 }

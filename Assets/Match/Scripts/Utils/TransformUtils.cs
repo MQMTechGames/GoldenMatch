@@ -19,9 +19,13 @@ struct TransformUtils
 		Quaternion deltaQuat = Quaternion.AngleAxis(MathUtils.toDegree(finalRotationAngle), up);
 		Quaternion newQuat = transform.rotation * deltaQuat;
 
-		if(useRigidbody) {
+		if(useRigidbody) 
+        {
+            Debug.Log("Rotating: " + finalRotationAngle);
 			transform.rigidbody.MoveRotation(transform.rotation * deltaQuat);
-		} else {
+		} 
+        else 
+        {
 			transform.Rotate(up, angle);
 		}
 
