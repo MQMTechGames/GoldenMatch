@@ -20,9 +20,6 @@ public class TestPlayerAI : IPlayer
 	public float _rotateVel = 2.0f;
 	public float _rotationAccelByDistance = 3.0f;
 	
-	// private params
-	BT _bt = null;
-	
 	PlayerMovement _playerController = null;
 	
 	Transform _transform = null;
@@ -55,6 +52,8 @@ public class TestPlayerAI : IPlayer
 		_animParams = AnimatorParams.sharedInstance();
 		
 		_ballTransform = GameObject.FindGameObjectWithTag("ball").transform;
+
+        base.Awake();
 	}
 
     public override BT initStandalone()
